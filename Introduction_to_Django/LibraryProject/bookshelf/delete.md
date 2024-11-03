@@ -1,3 +1,5 @@
+from bookshelf.models import Book
+
 Command:
 
 get_book.delete()
