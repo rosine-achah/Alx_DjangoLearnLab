@@ -1,4 +1,12 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+ROLE_CHOICES = [
+    ("Admin", "Admin"),
+    ("Librarian", "Librarian"),
+    ("Member", "Member"),
+]
+
 
 # Create your models here.
 class Author(models.Model):
@@ -13,8 +21,8 @@ class Book(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.title 
-    
+        return self.title
+
 
 class Library(models.Model):
     name = models.CharField(max_length=200)
@@ -23,11 +31,15 @@ class Library(models.Model):
     def __str__(self):
         return self.name
 
+
 class Librarian(models.Model):
     name = models.CharField(max_length=200)
-    library = models.OneToOneField(Library, on_delete= models.CASCADE)
+    library = models.OneToOneField(Library, on_delete=models.CASCADE)
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="Member")
 
     def __str__(self):
         return self.name
-
- 
