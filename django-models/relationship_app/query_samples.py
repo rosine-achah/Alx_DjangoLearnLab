@@ -9,5 +9,5 @@ def list_all_books(library_name):
     return library.books.all()
 
 def retrieve(library_name):
-    library = Librarian.objects.get(name=library_name)
-    return library.libarien
+    library = Library.objects.get(name=library_name)
+    return  Librarian.objects.get(library=library_name)
