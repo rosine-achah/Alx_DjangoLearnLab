@@ -54,4 +54,4 @@ class CustomUserAdmin(UserAdmin):
     ordering = ("email",)
 
 
-admin.site.register(CustomUserAdmin, CustomUser)
+admin.site.register(CustomUser, CustomUserAdmin)
