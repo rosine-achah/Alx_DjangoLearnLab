@@ -37,5 +37,22 @@ class CustomUser(AbstractUser):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["username"]
 
+
+# We are adding this new article model
+class Article(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    author = models.CharField(max_length=255)
+
+    # We also add the meta class within the article model to define custom permissions that will be used to control which usuers can view, create, edit or delete articles
+
+    class Meta:
+        permissions = [
+            ("can_view", "Can view article"),
+            ("can create", "Can create article"),
+            ("can_edit", "Can edit article"),
+            ("can_delete", "Can delete article"),
+        ]
+
     def __str__(self):
         return self.email
