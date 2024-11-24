@@ -140,3 +140,21 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "your-secret-key")
 
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+
+SECURE_SSL_REDIRECT = True
+
+
+SECURE_HSTS_SECONDS = 31536000  # 1 year in seconds
+
+
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+
+SECURE_HSTS_PRELOAD = True
+
+CSRF_COOKIE_SECURE = True
+
+X_FRAME_OPTIONS = "DENY"  # Setting this to DENY ensures that your pages cannot be framed, thus preventing clickjacking attempts.
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
+SECURE_BROWSER_XSS_FILTER = True
