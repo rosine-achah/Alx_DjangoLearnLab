@@ -49,7 +49,7 @@ class Article(models.Model):
     class Meta:
         permissions = [
             ("can_view", "Can view article"),
-            ("can create", "Can create article"),
+            ("can_create", "Can create article"),
             ("can_edit", "Can edit article"),
             ("can_delete", "Can delete article"),
         ]
