@@ -7,6 +7,7 @@ from .serializers import BookSerializer
 from rest_framework.response import Response
 from rest_framework import filters
 from .permissions import IsAuthorOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 # Create your views here.
 
