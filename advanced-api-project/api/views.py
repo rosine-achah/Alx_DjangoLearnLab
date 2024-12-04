@@ -3,6 +3,9 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 # from django_filters import rest_framework
 from rest_framework import django_filters
+import django_filters
+from django_filters import rest_framework as filters
+
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 from rest_framework import generics
