@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
 from rest_framework import generics
@@ -9,16 +10,29 @@ from rest_framework import filters
 from .permissions import IsAuthorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
+# from rest_framework import BookFilter, DjangoFilterBackend
+
 # Create your views here.
+
+
+class BookFilter(filters.FilterSet):
+    title = filters.CharFilter(lookup_expr="icontains")
+    author = filters.CharFilter(lookup_expr="icontains")
+    publication_year = filters.NumberFilter()
 
 
 # List view for retrieving all books
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    filter_backends = [filters.OrderingFilter]
-    ordering_fields = ["publication_year"]
-    ordering = ["publication_year"]
+    # filter_backends = [filters.OrderingFilter]
+    # ordering_fields = ["publication_year"]
+    # ordering = ["publication_year"]
+    filter_backends = (filter.DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_class = BookFilter
+    search_fields = ["title", "author"]
+    ordering_fields = ["title", "publication_year"]
+    ordering = ["title"]
 
 
 # Detail view for retrieving a single book by its ID
