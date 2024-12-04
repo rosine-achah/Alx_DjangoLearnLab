@@ -12,7 +12,8 @@ from rest_framework.response import Response
 from rest_framework import filters
 from .permissions import IsAuthorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
-from django_filters import rest_framework as filters
+
+# from django_filters import rest_framework as filters
 from rest_framework.filters import django_filters
 
 # from rest_framework import BookFilter, DjangoFilterBackend
@@ -24,6 +25,10 @@ class BookFilter(filters.FilterSet):
     title = filters.CharFilter(lookup_expr="icontains")
     author = filters.CharFilter(lookup_expr="icontains")
     publication_year = filters.NumberFilter()
+
+    class Meta:
+        model = Book
+        fields = ["title", "author", "publication_year"]
 
 
 # List view for retrieving all books
