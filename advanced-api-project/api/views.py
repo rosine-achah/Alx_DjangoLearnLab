@@ -12,6 +12,8 @@ from rest_framework.response import Response
 from rest_framework import filters
 from .permissions import IsAuthorOrReadOnly
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from django_filters import rest_framework as filters
+from rest_framework.filters import django_filters
 
 # from rest_framework import BookFilter, DjangoFilterBackend
 
