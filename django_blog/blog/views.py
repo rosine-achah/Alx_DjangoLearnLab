@@ -123,7 +123,10 @@ class PostDetailView(DetailView):
 
 
 # CreateView for creating new posts
-class PostCreateView(LoginRequiredMixin, CreateView):
+
+
+# class PostCreateView(LoginRequiredMixin, CreateView):
+class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = "blog/post_form.html"
@@ -135,7 +138,8 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class PostUpdateView(UpdateView):
+# class PostUpdateView(UpdateView):
+class CommentUpdate(UpdateView):
     model = Post
     form_class = PostForm
     template_name = "blog/post_form.html"
@@ -145,7 +149,8 @@ class PostUpdateView(UpdateView):
         return Post.objects.filter(author=self.request.user)
 
 
-class PostDeleteView(DeleteView):
+# class PostDeleteView(DeleteView):
+class CommentDeleteView(DeleteView):
     model = Post
     template_name = "blog/post_confirm_delete.html"
     success_url = reverse_lazy("post_list")
