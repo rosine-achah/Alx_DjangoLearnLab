@@ -28,6 +28,9 @@ from django.contrib import messages
 from django.views.generic.edit import UpdateView, DeleteView
 from .models import Post, Comment
 from .forms import CommentForm
+from django.db.models import Q
+from django.shortcuts import render
+from .models import Post, Tag
 
 
 def user_login(request):
@@ -252,3 +255,17 @@ class CommentUpdateView(UpdateView):
         return reverse_lazy(
             "post_detail", kwargs={"pk": self.object.post.pk}
         )  # Adjust based on your model structure
+
+
+def search_posts(request):
+    query = request.GET.get("q")
+    results = Post.objects.filter(Q(title_icontains=query) | Q(content_icontains=query))
+    return render(
+        request, "blog/search_results.html", {"results": results, "query": query}
+    )
+
+
+def posts_by_tag(request, tag_name):
+    tag = Tag.objects.get(name=tag_name)
+    posts = tag.posts.all()
+    return render(request, "blog/posts_by_tag.html", {"posts": posts, "tag": tag})

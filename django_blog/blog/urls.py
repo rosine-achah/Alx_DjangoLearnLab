@@ -56,6 +56,8 @@
 
 
 from django.urls import path
+from . import views
+from .views import search_posts
 from .views import (
     CustomLoginView,
     CustomLogoutView,
@@ -97,4 +99,8 @@ urlpatterns = [
     path("logout/", CustomLogoutView.as_view(), name="logout"),
     path("register/", register, name="register"),
     path("profile/", profile, name="profile"),
+    path("search/", search_posts, name="search_posts"),  # URL for search functionality
+    path(
+        "tags/<str:tag_name>/", views.posts_by_tag, name="posts_by_tag"
+    ),  # URL to filter posts by tag
 ]
