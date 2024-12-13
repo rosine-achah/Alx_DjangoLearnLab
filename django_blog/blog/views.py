@@ -31,6 +31,7 @@ from .forms import CommentForm
 from django.db.models import Q
 from django.shortcuts import render
 from .models import Post, Tag
+from taggit.forms import TagWidget
 
 
 def user_login(request):
