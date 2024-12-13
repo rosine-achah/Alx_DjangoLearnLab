@@ -30,6 +30,8 @@ class CustomLoginForm(AuthenticationForm):
 
 
 class PostForm(forms.ModelForm):
+    tags = TagField(widget=TagWidget())
+
     class Meta:
         model = Post
         fields = ["title", "content", "tags"]
