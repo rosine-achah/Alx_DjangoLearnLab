@@ -260,10 +260,19 @@ class CommentUpdateView(UpdateView):
 
 def search_posts(request):
     query = request.GET.get("q")
-    results = Post.objects.filter(Q(title_icontains=query) | Q(content_icontains=query))
-    return render(
-        request, "blog/search_results.html", {"results": results, "query": query}
-    )
+    if query:
+        # results = Post.objects.filter(Q(title_icontains=query) | Q(content_icontains=query))
+        # return render(
+        #     request, "blog/search_results.html", {"results": results, "query": query}
+        # )
+        posts = Post.objects.filter(
+            Q(title__icontains=query)
+            | Q(content__icontains=query)
+            | Q(tags__name__icontains=query)
+        ).distinct()
+    else:
+        posts = Post.objects.none()
+    return render(request, "blog/search_results.html", {"posts": posts, "query": query})
 
 
 def posts_by_tag(request, tag_name):
