@@ -17,8 +17,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from blog import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("blog.urls")),
+    path("comments/<int:comment_id>/edit/", views.edit_comment, name="edit_comment"),
 ]

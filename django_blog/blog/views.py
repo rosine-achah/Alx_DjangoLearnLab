@@ -14,17 +14,19 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from django.urls import reverse_lazy
 from .models import Post
 from django.contrib.auth import logout
-
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import AuthenticationForm
-
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import CreateView
-from django.urls import reverse_lazy
 from .forms import PostForm
+from .forms import CommentForm
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.views.generic.edit import UpdateView, DeleteView
+from .models import Post, Comment
 from .forms import CommentForm
 
 
@@ -125,8 +127,8 @@ class PostDetailView(DetailView):
 # CreateView for creating new posts
 
 
-# class PostCreateView(LoginRequiredMixin, CreateView):
-class CommentCreateView(LoginRequiredMixin, CreateView):
+class PostCreateView(LoginRequiredMixin, CreateView):
+    # class CommentCreateView(LoginRequiredMixin, CreateView):
     model = Post
     form_class = PostForm
     template_name = "blog/post_form.html"
@@ -138,8 +140,8 @@ class CommentCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-# class PostUpdateView(UpdateView):
-class CommentUpdate(UpdateView):
+class PostUpdateView(UpdateView):
+    # class CommentUpdate(UpdateView):
     model = Post
     form_class = PostForm
     template_name = "blog/post_form.html"
@@ -149,11 +151,98 @@ class CommentUpdate(UpdateView):
         return Post.objects.filter(author=self.request.user)
 
 
-# class PostDeleteView(DeleteView):
-class CommentDeleteView(DeleteView):
+class PostDeleteView(DeleteView):
+    # class CommentDeleteView(DeleteView):
     model = Post
     template_name = "blog/post_confirm_delete.html"
     success_url = reverse_lazy("post_list")
 
     def get_queryset(self):
         return Post.objects.filter(author=self.request.user)
+
+
+####################
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.author = request.user
+            comment.save()
+            messages.success(request, "Your comment has been added")
+            return redirect("blog.post_detail", post_id=post.id)
+    else:
+        form = CommentForm()
+    return render(request, "blog/add_comment.html", {"form": form, "post": post})
+
+
+class CommentUpdateView(UpdateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = "blog/edit_comment.html"
+
+    def get_queryset(self):
+        # Ensure only the author of the comment can edit it
+        return super().get_queryset().filter(author=self.request.user)
+
+    def form_valid(self, form):
+        messages.success(self.request, "Your comment has been updated.")
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy("blog:post_detail", kwargs={"pk": self.object.post.id})
+
+
+class DeleteCommentView(DeleteView):
+    model = Comment
+    template_name = "blog/delete_comment.html"
+
+    def get_queryset(self):
+        # Ensure only the author of the comment can delete it
+        return super().get_queryset().filter(author=self.request.user)
+
+    def get_success_url(self):
+        return reverse_lazy("blog:post_detail", kwargs={"pk": self.object.post.id})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Comment
+from .forms import CommentForm
+
+
+def edit_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.method == "POST":
+        form = CommentForm(request.POST, instance=comment)
+        if form.is_valid():
+            form.save()
+            return redirect("post_detail", pk=comment.post.pk)
+    else:
+        form = CommentForm(instance=comment)
+    return render(request, "blog/edit_comment.html", {"form": form})
+
+
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if request.method == "POST":
+        comment.delete()  # Deletes the comment
+        return redirect("home")  # Redirect to home or wherever you'd like
+    return render(request, "blog/confirm_delete.html", {"comment": comment})
+
+from django.views.generic import UpdateView
+from django.urls import reverse_lazy
+from .models import Comment  # Ensure you have this import to access your Comment model
+from .forms import CommentForm  # Assuming you have a form for comments
+
+class CommentUpdateView(UpdateView):
+    model = Comment
+    form_class = CommentForm  # Specify the form to use for comment updates
+    template_name = 'blog/comment_form.html'  # Specify the template for rendering the form
+    context_object_name = 'comment'  # Context variable for the comment instance
+
+    def get_success_url(self):
+        # Redirect to the post detail page after a successful update
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})  # Adjust based on your model structure
