@@ -5,6 +5,8 @@ from .models import Profile
 from django.contrib.auth.forms import AuthenticationForm
 from .models import Post
 from .models import Comment, Tag
+from taggit.models import Tag
+from taggit.forms import TagField
 
 
 class CustomUserCreationForm(UserCreationForm):
