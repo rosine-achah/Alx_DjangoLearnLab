@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-j50z#^8lcvwwt8r)+dm-1o&l*e9)x87b$&m(60q1%t@y5dib!!"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework.authtoken",
     "accounts",
+    "posts",
+    "notifications",
 ]
 
 MIDDLEWARE = [
@@ -81,6 +84,10 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+        "USER": os.getenv("DB_USER", "your-db-user"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "your-db-password"),
+        "HOST": os.getenv("DB_HOST", "your-db-host"),
+        "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
 
@@ -132,4 +139,41 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
 }
+
+
+# Secure browser settings
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = "DENY"
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_SSL_REDIRECT = True
+
+# Define allowed hosts
+ALLOWED_HOSTS = ["your-domain.com", "www.your-domain.com", "your-server-ip"]
+
+
+# Secret key management
+SECRET_KEY = os.getenv("SECRET_KEY", "your-default-secret-key")
+
+
+# Use .env for sensitive settings:
+# .env file:
+# SECRET_KEY=your-production-secret-key
+# DB_NAME=your-db-name
+# DB_USER=your-db-user
+# DB_PASSWORD=your-db-password
+# DB_HOST=your-db-host
+# DB_PORT=5432
+
+
+from decouple import config
+
+SECRET_KEY = config("SECRET_KEY")
+DATABASES["default"]["NAME"] = config("DB_NAME")
+DATABASES["default"]["USER"] = config("DB_USER")
+DATABASES["default"]["PASSWORD"] = config("DB_PASSWORD")
+DATABASES["default"]["HOST"] = config("DB_HOST")
+DATABASES["default"]["PORT"] = config("DB_PORT", cast=int)

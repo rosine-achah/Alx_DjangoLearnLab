@@ -11,7 +11,11 @@ class CustomUser(AbstractUser):
         upload_to="profile_pictures/", blank=True, null=True
     )
     followers = models.ManyToManyField(
-        "self", symmetrical=False, related_name="following", blank=True
+        "self",
+        symmetrical=False,
+        related_name="followed_by",
+        through="posts.Follow",
+        blank=True,
     )
 
     def __str__(self):

@@ -54,3 +54,18 @@ class RegisterView(View):
 
     def post(self, request):
         pass
+
+
+from django.views import View
+from django.http import JsonResponse
+
+
+class ProfileView(View):
+    def get(self, request):
+        # Placeholder for profile data
+        profile_data = {
+            "username": request.user.username,
+            "email": request.user.email,
+            # Add more user info as needed
+        }
+        return JsonResponse(profile_data)
