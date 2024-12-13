@@ -163,8 +163,8 @@ class PostDeleteView(DeleteView):
 
 ####################
 @login_required
-def add_comment(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+def add_comment(request, pk):
+    post = get_object_or_404(Post, id=pk)
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -173,7 +173,7 @@ def add_comment(request, post_id):
             comment.author = request.user
             comment.save()
             messages.success(request, "Your comment has been added")
-            return redirect("blog.post_detail", post_id=post.id)
+            return redirect("blog.post_detail", pk=post.id)
     else:
         form = CommentForm()
     return render(request, "blog/add_comment.html", {"form": form, "post": post})
@@ -232,17 +232,23 @@ def delete_comment(request, comment_id):
         return redirect("home")  # Redirect to home or wherever you'd like
     return render(request, "blog/confirm_delete.html", {"comment": comment})
 
+
 from django.views.generic import UpdateView
 from django.urls import reverse_lazy
 from .models import Comment  # Ensure you have this import to access your Comment model
 from .forms import CommentForm  # Assuming you have a form for comments
 
+
 class CommentUpdateView(UpdateView):
     model = Comment
     form_class = CommentForm  # Specify the form to use for comment updates
-    template_name = 'blog/comment_form.html'  # Specify the template for rendering the form
-    context_object_name = 'comment'  # Context variable for the comment instance
+    template_name = (
+        "blog/comment_form.html"  # Specify the template for rendering the form
+    )
+    context_object_name = "comment"  # Context variable for the comment instance
 
     def get_success_url(self):
         # Redirect to the post detail page after a successful update
-        return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})  # Adjust based on your model structure
+        return reverse_lazy(
+            "post_detail", kwargs={"pk": self.object.post.pk}
+        )  # Adjust based on your model structure

@@ -81,7 +81,7 @@ urlpatterns = [
     path("post/<int:pk>/delete/", PostDeleteView.as_view(), name="post_delete"),
     # Comment URLs
     path(
-        "post/<int:post_id>/comments/new/", add_comment, name="add_comment"
+        "post/<int:pk>/comments/new/", add_comment, name="add_comment"
     ),  # URL to add a new comment
     path(
         "comments/<int:pk>/edit/", CommentUpdateView.as_view(), name="edit_comment"
