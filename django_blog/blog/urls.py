@@ -19,7 +19,7 @@ urlpatterns = [
     path("logout/", views.user_logout, name="logout"),
     path("posts/", PostListView.as_view(), name="post_list"),
     path("posts/<int:pk>/", PostListView.as_view(), name="post_detail"),
-    path("posts/new/", PostCreateView.as_view(), name="post_create"),
+    path("post/new/", PostCreateView.as_view(), name="post_create"),
     path("post/<int:pk>/update/", PostUpdateView.as_view(), name="post_update"),
     path("post/<int:pk>/delete/", PostDeleteView.as_view(), name="post_delete"),
 ]
