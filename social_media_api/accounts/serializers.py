@@ -19,10 +19,12 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True)
+    password = serializers.CharField(
+        # write_only=True, required=True, style={"input_type": "password"}
+    )
 
     class Meta:
-        model = CustomUser
+        model = User  # CustomUser
         fields = ["username", "password", "email", "bio", "profile_picture"]
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -30,11 +32,18 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     #     user = CustomUser.objects.create_user(**validated_data)
     #     return user
     def create(self, validated_data):
-        # Remove the password from the data to hash it properly
         password = validated_data.pop("password")
-        user = CustomUser(**validated_data)
-        user.set_password(password)  # Hash the password
-        user.save()
+
+        # user = CustomUser(**validated_data)
+        # user.set_password(password)  # Hash the password
+        # user.save()
+        user = CustomUser.objects.create_user(
+            username=validated_data["username"],
+            email=validated_data.get("email"),
+            bio=validated_data.get("bio"),
+            profile_picture=validated_data.get("profile_picture"),
+            password=password,
+        )
 
         Token.objects.create(user=user)
         return user
