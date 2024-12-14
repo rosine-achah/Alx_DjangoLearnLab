@@ -2,11 +2,18 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import CustomUser
+from django.contrib.auth.models import AbstractUser
 
 User = get_user_model()
 
 
 # Create your models here.
+class CustomUser(AbstractUser):
+    following = models.ManyToManyField(
+        "self", symmetrical=False, related_name="followers"
+    )
+
+
 class Post(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts"

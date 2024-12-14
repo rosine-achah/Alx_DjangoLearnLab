@@ -8,7 +8,11 @@ from rest_framework.views import APIView
 from .models import Follow
 from django.db.models import Q
 
+from django.contrib.auth import get_user_model
+from rest_framework.decorators import action
 
+
+User = get_user_model()
 permission_classes = [permissions.IsAuthenticated]
 
 
@@ -118,3 +122,29 @@ class LikePostView(APIView):
         )
 
         return Response({"detail": "Post liked"}, status=status.HTTP_201_CREATED)
+
+
+class FollowViewSet(viewsets.ViewSet):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]  # Ensure only authenticated users can access these actions
+
+    @action(detail=False, methods=["post"])
+    def follow_user(self, request, user_id):
+        user_to_follow = User.objects.get(id=user_id)
+        request.user.following.add(
+            user_to_follow
+        )  # Assuming 'following' is the ManyToMany field
+        return Response(
+            {"message": f"You are now following {user_to_follow.username}."}
+        )
+
+    @action(detail=False, methods=["post"])
+    def unfollow_user(self, request, user_id):
+        user_to_unfollow = User.objects.get(id=user_id)
+        request.user.following.remove(
+            user_to_unfollow
+        )  # Assuming 'following' is the ManyToMany field
+        return Response(
+            {"message": f"You have unfollowed {user_to_unfollow.username}."}
+        )
