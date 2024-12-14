@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
     followers = models.ManyToManyField(
         "self",
         symmetrical=False,
-        related_name="followed_by",
+        related_name="following",
         through="posts.Follow",
         blank=True,
     )

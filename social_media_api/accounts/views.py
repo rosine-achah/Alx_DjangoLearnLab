@@ -14,6 +14,8 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from django.shortcuts import render
 from django.views import View
+from rest_framework import status
+from .serializers import UserRegistrationSerializer
 
 # class RegisterView(APIView):
 #     def post(self, request):
@@ -69,3 +71,12 @@ class ProfileView(View):
             # Add more user info as needed
         }
         return JsonResponse(profile_data)
+
+
+class UserRegistrationView(APIView):
+    def post(self, request):
+        serializer = UserRegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
