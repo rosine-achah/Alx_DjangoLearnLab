@@ -63,11 +63,10 @@ class TokenSerializer(serializers.ModelSerializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True,  # Ensure password is hidden in responses
-        required=True,
-        style={"input_type": "password"},  # Mask the password in browsable API
-    )
+    password = serializers.CharField()
+    # write_only=True,  # Ensure password is hidden in responses
+    # required=True,
+    # style={"input_type": "password"},  # Mask the password in browsable API
 
     class Meta:
         model = User
