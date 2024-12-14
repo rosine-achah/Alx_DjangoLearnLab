@@ -23,6 +23,9 @@ from django.shortcuts import get_object_or_404
 from .models import CustomUser
 from .models import Post
 from .serializers import PostSerializer
+from django.views import View
+from django.http import JsonResponse
+from rest_framework.decorators import action
 
 # class RegisterView(APIView):
 #     def post(self, request):
@@ -41,6 +44,7 @@ from .serializers import PostSerializer
 #     def get_object(self):
 #         return self.request.user
 
+
 User = get_user_model()
 
 
@@ -58,15 +62,10 @@ class CustomAuthToken(ObtainAuthToken):
 
 class RegisterView(View):
     def get(self, request):
-
         return render(request, "registration.html")
 
     def post(self, request):
         pass
-
-
-from django.views import View
-from django.http import JsonResponse
 
 
 class ProfileView(View):
@@ -115,3 +114,35 @@ class FeedView(generics.ListAPIView):
         return Post.objects.filter(
             author__in=self.request.user.following.all()
         ).order_by("-created_at")
+
+
+class FollowViewSet(viewsets.ViewSet):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]  # Ensure only authenticated users can access these actions
+
+    @action(detail=False, methods=["post"])
+    def follow_user(self, request, user_id):
+        try:
+            user_to_follow = User.objects.get(id=user_id)
+            request.user.following.add(
+                user_to_follow
+            )  # Assuming 'following' is the ManyToMany field
+            return Response(
+                {"message": f"You are now following {user_to_follow.username}."}
+            )
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=404)
+
+    @action(detail=False, methods=["post"])
+    def unfollow_user(self, request, user_id):
+        try:
+            user_to_unfollow = User.objects.get(id=user_id)
+            request.user.following.remove(
+                user_to_unfollow
+            )  # Assuming 'following' is the ManyToMany field
+            return Response(
+                {"message": f"You have unfollowed {user_to_unfollow.username}."}
+            )
+        except User.DoesNotExist:
+            return Response({"error": "User not found."}, status=404)
