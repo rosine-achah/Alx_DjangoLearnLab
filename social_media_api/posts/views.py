@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Follow
 from django.db.models import Q
-
+from .models import Post
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import action
 
@@ -148,3 +148,25 @@ class FollowViewSet(viewsets.ViewSet):
         return Response(
             {"message": f"You have unfollowed {user_to_unfollow.username}."}
         )
+
+
+class FeedViewSet(viewsets.ViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        # Get the current user
+        current_user = request.user
+
+        # Get the users that the current user is following
+        following_users = (
+            current_user.following.all()
+        )  # Assuming following is the ManyToMany field
+
+        # Fetch posts from the users that the current user follows
+        posts = Post.objects.filter(author__in=following_users).order_by(
+            "-created_at"
+        )  # Assuming created_at is the timestamp field
+
+        serializer = PostSerializer(posts, many=True)
+
+        return Response(serializer.data)
