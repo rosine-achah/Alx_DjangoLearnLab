@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +22,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-j50z#^8lcvwwt8r)+dm-1o&l*e9)x87b$&m(60q1%t@y5dib!!"
+
+
+# SECRET_KEY = "django-insecure-j50z#^8lcvwwt8r)+dm-1o&l*e9)x87b$&m(60q1%t@y5dib!!"
+
+
+####SECRET_KEY = config("s)t=p+z@2ji0g_b!t5r98*$^aiu*5hzre4$0s89zaubo+6x^&&")
+
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -80,14 +88,31 @@ WSGI_APPLICATION = "social_media_api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#         "USER": os.getenv("DB_USER", "your-db-user"),
+#         "PASSWORD": os.getenv("DB_PASSWORD", "your-db-password"),
+#         "HOST": os.getenv("DB_HOST", "your-db-host"),
+#         "PORT": os.getenv("DB_PORT", "5432"),
+#     }
+# }
+
+# For PostgreSQL: 'django.db.backends.postgresql'
+# For MySQL: 'django.db.backends.mysql'
+# For SQLite: 'django.db.backends.sqlite3'
+
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-        "USER": os.getenv("DB_USER", "your-db-user"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "your-db-password"),
-        "HOST": os.getenv("DB_HOST", "your-db-host"),
-        "PORT": os.getenv("DB_PORT", "5432"),
+        "ENGINE": "django.db.backends.postgresql",  # or your specific database backend
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT"),
     }
 }
 
