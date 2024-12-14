@@ -22,7 +22,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
 
     class Meta:
-        model = User
+        model = CustomUser
         fields = ["username", "password", "email", "bio", "profile_picture"]
         extra_kwargs = {"password": {"write_only": True}}
 
