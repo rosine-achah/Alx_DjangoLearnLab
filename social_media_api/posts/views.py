@@ -9,6 +9,9 @@ from .models import Follow
 from django.db.models import Q
 
 
+permission_classes = [permissions.IsAuthenticated]
+
+
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
