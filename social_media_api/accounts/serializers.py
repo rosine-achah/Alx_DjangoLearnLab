@@ -6,10 +6,10 @@ from .models import CustomUser
 User = get_user_model()
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CustomUser
-        fields = ["id", "username", "email", "bio", "profile_picture"]
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = CustomUser
+#         fields = ["id", "username", "email", "bio", "profile_picture"]
 
 
 class TokenSerializer(serializers.ModelSerializer):
