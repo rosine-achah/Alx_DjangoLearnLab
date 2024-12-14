@@ -10,6 +10,7 @@ from django.db.models import Q
 from .models import Post
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import action
+from django.shortcuts import get_object_or_404
 
 
 User = get_user_model()
@@ -212,13 +213,59 @@ from .serializers import PostSerializer
 #                 status=status.HTTP_400_BAD_REQUEST,
 #             )
 
+# from rest_framework import viewsets, permissions
+# from rest_framework.response import Response
+# from rest_framework import status
+# from django.shortcuts import get_object_or_404  # Import the function
+# from .models import Post, Like
+# from .serializers import PostSerializer
+# from notifications.models import Notification  # Ensure Notification model is imported
+
+
+# class PostViewSet(viewsets.ModelViewSet):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+#     permission_classes = [permissions.IsAuthenticated]
+
+#     def like_post(self, request, pk):
+#         post = get_object_or_404(
+#             Post, pk=pk
+#         )  # Use get_object_or_404 to retrieve the post
+#         like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+#         if created:
+#             Notification.objects.create(
+#                 recipient=post.author, actor=request.user, verb="liked", target=post
+#             )
+#             return Response(status=status.HTTP_201_CREATED)
+#         else:
+#             return Response(
+#                 {"detail": "Already liked this post"},
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+
+#     def unlike_post(self, request, pk):
+#         post = get_object_or_404(
+#             Post, pk=pk
+#         )  # Use get_object_or_404 to retrieve the post
+#         try:
+#             like = Like.objects.get(user=request.user, post=post)
+#             like.delete()
+#             return Response(status=status.HTTP_204_NO_CONTENT)
+#         except Like.DoesNotExist:
+#             return Response(
+#                 {"detail": "Not liked this post yet"},
+#                 status=status.HTTP_400_BAD_REQUEST,
+#             )
+
+
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404  # Import the function
 from .models import Post, Like
 from .serializers import PostSerializer
-from notifications.models import Notification  # Ensure Notification model is imported
+from notifications.models import Notification  # Import Notification model
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -226,10 +273,9 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    # Method to like a post
     def like_post(self, request, pk):
-        post = get_object_or_404(
-            Post, pk=pk
-        )  # Use get_object_or_404 to retrieve the post
+        post = get_object_or_404(Post, pk=pk)  # Use get_object_or_404 here
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if created:
@@ -243,10 +289,9 @@ class PostViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+    # Method to unlike a post
     def unlike_post(self, request, pk):
-        post = get_object_or_404(
-            Post, pk=pk
-        )  # Use get_object_or_404 to retrieve the post
+        post = get_object_or_404(Post, pk=pk)  # Use get_object_or_404 here
         try:
             like = Like.objects.get(user=request.user, post=post)
             like.delete()
