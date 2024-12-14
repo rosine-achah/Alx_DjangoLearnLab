@@ -30,3 +30,20 @@ urlpatterns = [
     path("api/posts", include("posts.urls")),
     path("notifications/", include("notifications.urls")),
 ]
+
+from django.urls import path
+from .views import PostViewSet
+
+post_list = PostViewSet.as_view({"get": "list", "post": "create"})
+post_detail = PostViewSet.as_view(
+    {"get": "retrieve", "put": "update", "delete": "destroy"}
+)
+post_like = PostViewSet.as_view({"post": "like_post"})
+post_unlike = PostViewSet.as_view({"delete": "unlike_post"})
+
+urlpatterns = [
+    path("posts/", post_list, name="post-list"),
+    path("posts/<int:pk>/", post_detail, name="post-detail"),
+    path("posts/<int:pk>/like/", post_like, name="post-like"),
+    path("posts/<int:pk>/unlike/", post_unlike, name="post-unlike"),
+]

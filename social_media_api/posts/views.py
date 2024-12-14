@@ -170,3 +170,44 @@ class FeedViewSet(viewsets.ViewSet):
         serializer = PostSerializer(posts, many=True)
 
         return Response(serializer.data)
+
+
+from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Post, Like
+from .serializers import PostSerializer
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def like_post(self, request, pk):
+        post = self.get_object()
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+        if created:
+            # Optionally create a notification here
+            Notification.objects.create(
+                recipient=post.author, actor=request.user, verb="liked", target=post
+            )
+            return Response(status=status.HTTP_201_CREATED)
+        else:
+            return Response(
+                {"detail": "Already liked this post"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    def unlike_post(self, request, pk):
+        post = self.get_object()
+        try:
+            like = Like.objects.get(user=request.user, post=post)
+            like.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Like.DoesNotExist:
+            return Response(
+                {"detail": "Not liked this post yet"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
